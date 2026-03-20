@@ -3,7 +3,7 @@ import * as net from 'node:net';
 const TCP_PORT = 5000;
 const HOST = '127.0.0.1';
 const CONCURRENT_DEVICES = 50;
-const DURATION_SECONDS = 30;
+const DURATION_SECONDS = 60;
 const PING_INTERVAL_MS = 1000;
 
 const IMEIs = Array.from({ length: CONCURRENT_DEVICES }, (_, i) => 

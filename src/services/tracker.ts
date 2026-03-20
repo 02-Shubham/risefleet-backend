@@ -73,7 +73,9 @@ export async function flushLogs() {
     });
     logger.info({ count: batch.length }, 'Logs saved to DB');
   } catch (error) {
-    logger.error({ error }, 'Failed to save logs');
+    logger.error({ error }, 'Failed to save logs, re-buffering...');
+    // Re-buffer for retry in the next cycle (Tier 2 requirement)
+    logBuffer = [...batch, ...logBuffer];
   }
 }
 
