@@ -9,7 +9,11 @@ const logger = pino({
 });
 
 const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-123';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET && process.env.NODE_ENV === 'production') {
+  throw new Error('FATAL: JWT_SECRET environment variable is missing in production!');
+}
+const ACTUAL_SECRET = JWT_SECRET || 'dev-secret-ignore-this';
 
 export const setupApi = (app: express.Express) => {
   app.use(express.json());
@@ -20,7 +24,7 @@ export const setupApi = (app: express.Express) => {
       const user = await prisma.user.findUnique({ where: { email } });
       if (!user) return res.status(404).json({ error: 'User not found' });
 
-      const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '24h' });
+      const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, ACTUAL_SECRET, { expiresIn: '24h' });
       res.json({ token });
     } catch (err: any) {
       logger.error({ err }, 'Auth failed');
@@ -32,7 +36,7 @@ export const setupApi = (app: express.Express) => {
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) return res.status(401).json({ error: 'Unauthorized' });
     try {
-      req.user = jwt.verify(authHeader.split(' ')[1]!, JWT_SECRET) as any;
+      req.user = jwt.verify(authHeader.split(' ')[1]!, ACTUAL_SECRET) as any;
       next();
     } catch (err) {
       res.status(401).json({ error: 'Invalid token' });

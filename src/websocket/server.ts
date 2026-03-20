@@ -11,7 +11,11 @@ const logger = pino({
 });
 
 const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-123';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET && process.env.NODE_ENV === 'production') {
+  throw new Error('FATAL: JWT_SECRET environment variable is missing in production!');
+}
+const ACTUAL_SECRET = JWT_SECRET || 'dev-secret-ignore-this';
 
 interface AuthClient {
   ws: WebSocket;
@@ -53,7 +57,7 @@ async function authenticate(ws: WebSocket, req: IncomingMessage): Promise<AuthCl
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    const decoded = jwt.verify(token, ACTUAL_SECRET) as any;
     const imeis = new Set<string>();
 
     if (decoded.role === 'Customer') {
