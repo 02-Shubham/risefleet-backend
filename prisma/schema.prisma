@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  Admin
+  Customer
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  role          UserRole @default(Customer)
+  password_hash String
+  devices       Device[]
+  created_at    DateTime @default(now())
+}
+
+model Device {
+  imei           String        @id
+  vehicle_number String
+  customer_id    String
+  customer       User          @relation(fields: [customer_id], references: [id])
+  location_logs  LocationLog[]
+  created_at     DateTime      @default(now())
+
+  @@index([customer_id])
+}
+
+model LocationLog {
+  id         Int      @id @default(autoincrement())
+  imei       String
+  device     Device   @relation(fields: [imei], references: [imei])
+  lat        Float
+  lng        Float
+  speed      Float
+  ignition   Boolean
+  timestamp  DateTime
+  created_at DateTime @default(now())
+
+  @@index([imei])
+  @@index([timestamp])
+}
