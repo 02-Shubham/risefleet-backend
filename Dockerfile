@@ -28,12 +28,12 @@ COPY --from=builder /app/prisma ./prisma
 
 # Environment variables (Railway will provide these)
 ENV PORT=8080
-ENV TCP_PORT=5000
+ENV TCP_PORT=5050
 ENV NODE_ENV=production
 
 # Expose ports
 EXPOSE 8080
-EXPOSE 5000
+EXPOSE 5050
 
 # Start the application
 CMD ["node", "dist/index.js"]

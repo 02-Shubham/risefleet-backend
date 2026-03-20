@@ -1,6 +1,6 @@
 import * as net from 'node:net';
 
-const TCP_PORT = 5000;
+const TCP_PORT = 5050;
 const HOST = '127.0.0.1';
 const CONCURRENT_DEVICES = 50;
 const DURATION_SECONDS = 60;
