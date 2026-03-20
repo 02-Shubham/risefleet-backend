@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleet Pulse Live Demo</title>
+    <style>
+        body { font-family: sans-serif; background: #0f172a; color: #f8fafc; padding: 20px; }
+        #logs { background: #1e293b; padding: 15px; border-radius: 8px; font-family: monospace; height: 300px; overflow-y: scroll; border: 1px solid #334155; }
+        .log-item { margin-bottom: 8px; color: #38bdf8; }
+        .success { color: #4ade80; }
+        input { padding: 10px; width: 400px; background: #334155; border: none; color: white; border-radius: 4px; }
+        button { padding: 10px 20px; background: #6366f1; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🚀 Fleet Pulse Live Dashboard Demo</h1>
+    <p>Paste your <strong>Admin Token</strong> here to connect:</p>
+    <input type="text" id="token" placeholder="Bearer eyJhbGciOiJIUzI1NiI...">
+    <button onclick="connect()">Connect WS</button>
+    <p>Status: <span id="status">Disconnected</span></p>
+
+    <h3>Incoming Pings (Live):</h3>
+    <div id="logs">
+        <div class="log-item">Waiting for connection...</div>
+    </div>
+
+    <script>
+        let ws;
+        function connect() {
+            const token = document.getElementById('token').value.replace('Bearer ', '');
+            const logDiv = document.getElementById('logs');
+            const status = document.getElementById('status');
+
+            if (ws) ws.close();
+            
+            ws = new WebSocket(`ws://localhost:8080?token=${token}`);
+
+            ws.onopen = () => {
+                status.innerText = 'Connected ✅';
+                status.style.color = '#4ade80';
+                logDiv.innerHTML += '<div class="log-item success">Ready! Send a TCP ping now...</div>';
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                const item = document.createElement('div');
+                item.className = 'log-item';
+                item.innerText = `[${new Date().toLocaleTimeString()}] Event: ${data.event} | IMEI: ${data.data.imei} | Lat: ${data.data.lat}`;
+                logDiv.appendChild(item);
+                logDiv.scrollTop = logDiv.scrollHeight;
+            };
+
+            ws.onerror = (err) => {
+                status.innerText = 'Error (Invalid Token?) ❌';
+                status.style.color = '#f43f5e';
+            };
+        }
+    </script>
+</body>
+</html>
