@@ -9,7 +9,7 @@ const logger = pino({
 
 let server: net.Server | null = null;
 
-export function startTcpServer(port: number = 5000) {
+export function startTcpServer(port: number = 5050) {
   server = net.createServer((socket) => {
     logger.info({ remote: socket.remoteAddress }, 'New TCP connection');
     let buffer = '';

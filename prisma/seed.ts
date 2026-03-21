@@ -1,4 +1,4 @@
-import { PrismaClient, UserRole } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import * as crypto from 'crypto';
 
 const prisma = new PrismaClient();
@@ -12,7 +12,7 @@ async function main() {
     update: {},
     create: {
       email: 'admin@fleetpulse.com',
-      role: UserRole.Admin,
+      role: 'Admin',
       password_hash: passwordHash,
     },
   });
@@ -22,7 +22,7 @@ async function main() {
     update: {},
     create: {
       email: 'customer@fleetpulse.com',
-      role: UserRole.Customer,
+      role: 'Customer',
       password_hash: passwordHash,
     },
   });
