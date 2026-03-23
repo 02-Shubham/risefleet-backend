@@ -20,6 +20,27 @@ We use an **Event-Driven, Buffered Batching** approach:
 - **Horizontal Scaling**: Currently uses a local `EventEmitter`. **Improvement**: Use Redis Pub/Sub to sync events across multiple instances of the backend.
 - **Security**: Basic JWT is used. **Improvement**: Implement Refresh Tokens and IP-based rate limiting for the TCP server to prevent DDoS.
 
+## 🚀 Deployment Verification
+Once you've deployed your backend, you can verify all services (HTTP, TCP, WebSocket) are working correctly:
+
+### 1. Automated Check
+Run the verification script against your deployed URL:
+```bash
+# General usage:
+npm run test:deploy -- [API_URL] [TCP_PORT] [TCP_HOST]
+
+# For your current Railway setup:
+npm run test:deploy -- https://risefleet-backend-production.up.railway.app 34834 ballast.proxy.rlwy.net
+```
+*(Replace `your-app.railway.app` with your actual URL and `5050` with your TCP port if different)*
+
+### 2. Manual Verification
+- **TCP Ingest**: Test if the port is open using `nc`:
+  ```bash
+  nc -zv your-app.railway.app 5050
+  ```
+- **Live Dashboard**: Open `test_websocket.html` locally, paste your Admin JWT, and connect. If it connects, your WebSocket link is working.
+
 ## ⚙️ Local Setup
 1. `make setup` - Install dependencies.
 2. `make up` - Start PostgreSQL via Docker.

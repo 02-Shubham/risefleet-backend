@@ -12,7 +12,8 @@
     "prisma:push": "prisma db push",
     "prisma:seed": "prisma db seed",
     "docker:up": "docker-compose up -d",
-    "test:load": "tsx tests/load-test.ts"
+    "test:load": "tsx tests/load-test.ts",
+    "test:deploy": "tsx scripts/check-deployment.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
