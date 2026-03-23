@@ -18,6 +18,14 @@ const ACTUAL_SECRET = JWT_SECRET || 'dev-secret-ignore-this';
 export const setupApi = (app: express.Express) => {
   app.use(express.json());
 
+  app.get('/', (req, res) => {
+    res.json({ 
+      message: '👑 RiseFleet Tracking API is Online',
+      status: 'Ready',
+      endpoints: ['/health', '/auth/token', '/devices']
+    });
+  });
+
   app.post('/auth/token', async (req, res) => {
     const { email } = req.body;
     try {
